@@ -1,18 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
 
 :root {
-    --white: #FBFAF9;
-    --light-gray: #E5E2DC;
-    --light-gray-2: #E5E2DC80;
+    --white: #fbfaf9;
+    --light-gray: #e5e2dc;
+    --light-gray-2: #e5e2dc80;
     --dark-gray: #343027;
     --black: #171511;
-    --orange: #D75732;
-    --orange-2: #D8937E;
+    --black-75: #51514c;
+    --orange: #d75732;
+    --orange-2: #d8937e;
     --green: #cbd732;
-    --green-2: #D9DDA8;
-    --blue: #32ACD7;
-    --blue-2: #9FC7D6;
+    --green-2: #d9dda8;
+    --blue: #32acd7;
+    --blue-2: #9fc7d6;
+}
 
+* {
+    scroll-behavior: smooth;
 }
 
 body {
@@ -23,36 +27,57 @@ body {
     font-style: normal;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: "Source Sans 3", sans-serif;
+    margin: 0;
 }
 
 h1 {
     font-size: 72px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 100%;
 }
 
 h2 {
     font-size: 24px;
-    font-weight: 200;
-    line-height: 120%;
+    font-weight: 400;
+    line-height: 100%;
 }
 
 h3 {
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 110%;
+    font-size: 24px;
+    font-weight: 200;
+    line-height: 100%;
 }
 
 h4 {
     font-size: 16px;
-    font-weight: 200;
+    font-weight: 700;
     line-height: 110%;
 }
 
 h5 {
-    font-size: 8px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 110%;
+}
+
+h6 {
+    font-size: 12px;
     font-weight: 200;
-    line-height: 120%;
+    line-height: 110%;
+}
+
+.router-link,
+a {
+    all: unset;
+}
+
+.router-link-active {
+    text-decoration: underline;
 }

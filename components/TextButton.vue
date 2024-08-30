@@ -1,19 +1,28 @@
 <template>
     <button>
-        <h4>
+        <h6
+            :style="{
+                fontWeight: fontWeight,
+                textDecoration: active ? 'underline' : '',
+            }"
+        >
             <slot></slot>
-        </h4>
+        </h6>
     </button>
 </template>
 
-<script setup></script>
+<script setup>
+const { fontWeight, active } = defineProps(["font-weight", "active"]);
+</script>
 
 <style scoped>
-    button {
-        all: unset;
-    }
+button {
+    all: unset;
+    cursor: pointer;
+    white-space: nowrap;
+}
 
-    button:hover {
-        text-decoration: underline;
-    }
+button:hover {
+    color: var(--black-75);
+}
 </style>
