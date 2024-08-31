@@ -1,6 +1,6 @@
 <template>
     <main>
-        <!-- <nav></nav> -->
+        <Navigation />
         <section>
             <slot></slot>
         </section>
@@ -23,14 +23,6 @@ main {
     margin: 0 auto;
     padding: 16px;
     background-color: var(--light-gray);
-}
-
-nav {
-    height: 32px;
-    width: 390px;
-    padding: 16px;
-    border-radius: 16px;
-    background-color: var(--white);
 }
 
 section {

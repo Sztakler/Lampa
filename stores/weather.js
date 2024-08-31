@@ -1,0 +1,245 @@
+import { fetchWeatherApi } from "openmeteo";
+import { defineStore } from "pinia";
+
+const params = {
+    latitude: null,
+    longitude: null,
+    current: [
+        "temperature_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "is_day",
+        "precipitation",
+        "rain",
+        "showers",
+        "snowfall",
+        "weather_code",
+        "cloud_cover",
+        "pressure_msl",
+        "surface_pressure",
+        "wind_speed_10m",
+        "wind_direction_10m",
+        "wind_gusts_10m",
+    ],
+    hourly: [
+        "temperature_2m",
+        "relative_humidity_2m",
+        "dew_point_2m",
+        "apparent_temperature",
+        "precipitation_probability",
+        "precipitation",
+        "rain",
+        "showers",
+        "snowfall",
+        "snow_depth",
+        "weather_code",
+        "surface_pressure",
+        "cloud_cover",
+        "visibility",
+        "wind_speed_10m",
+        "wind_direction_10m",
+        "wind_gusts_10m",
+        "temperature_80m",
+        "uv_index",
+        "uv_index_clear_sky",
+        "is_day",
+    ],
+    daily: [
+        "weather_code",
+        "temperature_2m_max",
+        "temperature_2m_min",
+        "apparent_temperature_max",
+        "apparent_temperature_min",
+        "sunrise",
+        "sunset",
+        "daylight_duration",
+        "sunshine_duration",
+        "uv_index_max",
+        "uv_index_clear_sky_max",
+        "precipitation_sum",
+        "rain_sum",
+        "showers_sum",
+        "snowfall_sum",
+        "precipitation_hours",
+        "precipitation_probability_max",
+        "wind_speed_10m_max",
+        "wind_gusts_10m_max",
+        "wind_direction_10m_dominant",
+        "shortwave_radiation_sum",
+        "et0_fao_evapotranspiration",
+    ],
+};
+
+const weatherURL = "https://api.open-meteo.com/v1/forecast";
+const geocodingURL = "https://nominatim.openstreetmap.org/search";
+
+async function fetchGeocodingData(cityName) {
+    try {
+        const response = await fetch(
+            geocodingURL + `?q=${cityName.value}&format=json&limit=1`,
+        );
+        if (!response.ok) {
+            throw new Error("Geocoding response was not ok");
+        }
+        const data = await response.json();
+        if (data && data.length > 0) {
+            console.log(data[0].lat, data[0].lon, cityName.value);
+            return {
+                latitude: data[0].lat,
+                longitude: data[0].lon,
+            };
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching coordinates:", error);
+        return null;
+    }
+}
+
+async function fetchWeatherData(location) {
+    try {
+        console.log("location", location);
+        if (location) {
+            params.latitude = location.latitude;
+            params.longitude = location.longitude;
+        }
+        // Helper function to form time ranges
+        const range = (start, stop, step) =>
+            Array.from(
+                { length: (stop - start) / step },
+                (_, i) => start + i * step,
+            );
+
+        const responses = await fetchWeatherApi(weatherURL, params);
+
+        // Process first location. Add a for-loop for multiple locations or weather models
+        const response = responses[0];
+
+        // Attributes for timezone and location
+        const utcOffsetSeconds = response.utcOffsetSeconds();
+        const timezone = response.timezone();
+        const timezoneAbbreviation = response.timezoneAbbreviation();
+        const latitude = response.latitude();
+        const longitude = response.longitude();
+
+        const current = response.current();
+        const hourly = response.hourly();
+        const daily = response.daily();
+
+        // Note: The order of weather variables in the URL query and the indices below need to match
+        const weatherData = {
+            current: {
+                time: new Date(
+                    (Number(current.time()) + utcOffsetSeconds) * 1000,
+                ),
+                temperature2m: current.variables(0).value(),
+                relativeHumidity2m: current.variables(1).value(),
+                apparentTemperature: current.variables(2).value(),
+                isDay: current.variables(3).value(),
+                precipitation: current.variables(4).value(),
+                rain: current.variables(5).value(),
+                showers: current.variables(6).value(),
+                snowfall: current.variables(7).value(),
+                weatherCode: current.variables(8).value(),
+                cloudCover: current.variables(9).value(),
+                pressureMsl: current.variables(10).value(),
+                surfacePressure: current.variables(11).value(),
+                windSpeed10m: current.variables(12).value(),
+                windDirection10m: current.variables(13).value(),
+                windGusts10m: current.variables(14).value(),
+            },
+            hourly: {
+                time: range(
+                    Number(hourly.time()),
+                    Number(hourly.timeEnd()),
+                    hourly.interval(),
+                ).map((t) => new Date((t + utcOffsetSeconds) * 1000)),
+                temperature2m: hourly.variables(0).valuesArray(),
+                relativeHumidity2m: hourly.variables(1).valuesArray(),
+                dewPoint2m: hourly.variables(2).valuesArray(),
+                apparentTemperature: hourly.variables(3).valuesArray(),
+                precipitationProbability: hourly.variables(4).valuesArray(),
+                precipitation: hourly.variables(5).valuesArray(),
+                rain: hourly.variables(6).valuesArray(),
+                showers: hourly.variables(7).valuesArray(),
+                snowfall: hourly.variables(8).valuesArray(),
+                snowDepth: hourly.variables(9).valuesArray(),
+                weatherCode: hourly.variables(10).valuesArray(),
+                surfacePressure: hourly.variables(11).valuesArray(),
+                cloudCover: hourly.variables(12).valuesArray(),
+                visibility: hourly.variables(13).valuesArray(),
+                windSpeed10m: hourly.variables(14).valuesArray(),
+                windDirection10m: hourly.variables(15).valuesArray(),
+                windGusts10m: hourly.variables(16).valuesArray(),
+                temperature80m: hourly.variables(17).valuesArray(),
+                uvIndex: hourly.variables(18).valuesArray(),
+                uvIndexClearSky: hourly.variables(19).valuesArray(),
+                isDay: hourly.variables(20).valuesArray(),
+            },
+            daily: {
+                time: range(
+                    Number(daily.time()),
+                    Number(daily.timeEnd()),
+                    daily.interval(),
+                ).map((t) => new Date((t + utcOffsetSeconds) * 1000)),
+                weatherCode: daily.variables(0).valuesArray(),
+                temperature2mMax: daily.variables(1).valuesArray(),
+                temperature2mMin: daily.variables(2).valuesArray(),
+                apparentTemperatureMax: daily.variables(3).valuesArray(),
+                apparentTemperatureMin: daily.variables(4).valuesArray(),
+                sunrise: daily.variables(5).valuesArray(),
+                sunset: daily.variables(6).valuesArray(),
+                daylightDuration: daily.variables(7).valuesArray(),
+                sunshineDuration: daily.variables(8).valuesArray(),
+                uvIndexMax: daily.variables(9).valuesArray(),
+                uvIndexClearSkyMax: daily.variables(10).valuesArray(),
+                precipitationSum: daily.variables(11).valuesArray(),
+                rainSum: daily.variables(12).valuesArray(),
+                showersSum: daily.variables(13).valuesArray(),
+                snowfallSum: daily.variables(14).valuesArray(),
+                precipitationHours: daily.variables(15).valuesArray(),
+                precipitationProbabilityMax: daily.variables(16).valuesArray(),
+                windSpeed10mMax: daily.variables(17).valuesArray(),
+                windGusts10mMax: daily.variables(18).valuesArray(),
+                windDirection10mDominant: daily.variables(19).valuesArray(),
+                shortwaveRadiationSum: daily.variables(20).valuesArray(),
+                et0FaoEvapotranspiration: daily.variables(21).valuesArray(),
+            },
+        };
+        console.log(weatherData);
+        return weatherData;
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+    } finally {
+    }
+}
+
+export const useWeatherStore = defineStore("weather", () => {
+    const cityName = ref("");
+    const weatherData = ref(null);
+
+    async function updateWeatherData() {
+        console.log("update");
+        const location = await fetchGeocodingData(cityName);
+        weatherData.value = await fetchWeatherData(location);
+        console.log(weatherData);
+    }
+
+    const count = ref(0);
+    const name = ref("Eduardo");
+    const doubleCount = computed(() => count.value * 2);
+    function increment() {
+        count.value++;
+    }
+
+    return {
+        cityName,
+        count,
+        name,
+        doubleCount,
+        increment,
+        updateWeatherData,
+        weatherData,
+    };
+});
