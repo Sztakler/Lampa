@@ -36,6 +36,10 @@ const params = {
         "surface_pressure",
         "visibility",
         "wind_speed_10m",
+        "uv_index",
+        "uv_index_clear_sky",
+        "is_day",
+        "sunshine_duration",
     ],
     daily: [
         "weather_code",
@@ -158,6 +162,10 @@ async function fetchWeatherData(location) {
                 surfacePressure: hourly.variables(11).valuesArray(),
                 visibility: hourly.variables(12).valuesArray(),
                 windSpeed10m: hourly.variables(13).valuesArray(),
+                uvIndex: hourly.variables(14).valuesArray(),
+                uvIndexClearSky: hourly.variables(15).valuesArray(),
+                isDay: hourly.variables(16).valuesArray(),
+                sunshineDuration: hourly.variables(17).valuesArray(),
             },
             daily: {
                 time: range(

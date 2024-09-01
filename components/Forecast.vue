@@ -17,9 +17,17 @@
             <div class="weather-icon">
                 <img
                     class="monochromatic"
-                    :src="weatherStore.getIconPath(dayIndex, 'current')"
+                    :src="
+                        weatherStore.getIconPath(
+                            dayIndex,
+                            dayIndex === 0 ? 'current' : 'daily',
+                        )
+                    "
                     :alt="
-                        weatherStore.getWeatherDescription(dayIndex, 'current')
+                        weatherStore.getWeatherDescription(
+                            dayIndex,
+                            dayIndex === 0 ? 'current' : 'daily',
+                        )
                     "
                 />
                 <h2>
