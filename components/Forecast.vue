@@ -17,8 +17,10 @@
             <div class="weather-icon">
                 <img
                     class="monochromatic"
-                    :src="weatherStore.getIconPath(dayIndex)"
-                    :alt="weatherStore.getWeatherDescription(dayIndex)"
+                    :src="weatherStore.getIconPath(dayIndex, 'current')"
+                    :alt="
+                        weatherStore.getWeatherDescription(dayIndex, 'current')
+                    "
                 />
                 <h2>
                     {{ weatherIcons[weatherData.current.weatherCode].name }}
@@ -54,15 +56,22 @@
                         </h5>
                         <img
                             class="monochromatic"
-                            :src="weatherStore.getIconPath(dayIndex + 1)"
+                            :src="
+                                weatherStore.getIconPath(dayIndex + 1, 'daily')
+                            "
                             :alt="
-                                weatherStore.getWeatherDescription(dayIndex + 1)
+                                weatherStore.getWeatherDescription(
+                                    dayIndex + 1,
+                                    'daily',
+                                )
                             "
                         />
                         <h6>
                             {{
                                 Math.round(
-                                    weatherData.daily.temperature2mMax[1],
+                                    weatherData.daily.temperature2mMax[
+                                        dayIndex + 1
+                                    ],
                                 )
                             }}
                             °C
@@ -81,15 +90,22 @@
                         </h5>
                         <img
                             class="monochromatic"
-                            :src="weatherStore.getIconPath(dayIndex + 2)"
+                            :src="
+                                weatherStore.getIconPath(dayIndex + 2, 'daily')
+                            "
                             :alt="
-                                weatherStore.getWeatherDescription(dayIndex + 2)
+                                weatherStore.getWeatherDescription(
+                                    dayIndex + 2,
+                                    'daily',
+                                )
                             "
                         />
                         <h6>
                             {{
                                 Math.round(
-                                    weatherData.daily.temperature2mMax[2],
+                                    weatherData.daily.temperature2mMax[
+                                        dayIndex + 2
+                                    ],
                                 )
                             }}
                             °C
@@ -108,15 +124,22 @@
                         </h5>
                         <img
                             class="monochromatic"
-                            :src="weatherStore.getIconPath(dayIndex + 3)"
+                            :src="
+                                weatherStore.getIconPath(dayIndex + 3, 'daily')
+                            "
                             :alt="
-                                weatherStore.getWeatherDescription(dayIndex + 3)
+                                weatherStore.getWeatherDescription(
+                                    dayIndex + 3,
+                                    'daily',
+                                )
                             "
                         />
                         <h6>
                             {{
                                 Math.round(
-                                    weatherData.daily.temperature2mMax[3],
+                                    weatherData.daily.temperature2mMax[
+                                        dayIndex + 3
+                                    ],
                                 )
                             }}
                             °C

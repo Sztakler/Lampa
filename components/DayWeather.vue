@@ -1,14 +1,16 @@
 <template>
     <div class="container">
         <div class="left">
-            <h4>{{ calculateDateString(index - 1) }}</h4>
-            <h6>{{ weatherStore.getWeatherDescription(index - 1) }}</h6>
+            <h4>{{ calculateDateString(index) }}</h4>
+            <h6>
+                {{ weatherStore.getWeatherDescription(index - 1, "daily") }}
+            </h6>
         </div>
         <div class="right">
             <img
                 class="monochromatic"
-                :src="weatherStore.getIconPath(index - 1)"
-                :alt="weatherStore.getWeatherDescription(index - 1)"
+                :src="weatherStore.getIconPath(index - 1, 'daily')"
+                :alt="weatherStore.getWeatherDescription(index - 1, 'daily')"
             />
             <h3>
                 {{

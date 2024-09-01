@@ -358,25 +358,75 @@ export const useWeatherStore = defineStore("weather", () => {
         },
     });
 
-    function getIconPath(index = 0) {
+    /**
+     * Calculates path to weather icon.
+     *
+     * @param {number} index - specifies index of measurement
+     * @param {string} interval - specifies time interval of weather measurement. Can be "current" (default), "daily" or "hourly".
+
+     * @returns {string} Static path to icon.
+     */
+    function getIconPath(index = 0, interval = "current") {
+        let data = weatherData.value.current;
+
+        if (interval === "hourly") {
+            data = weatherData.value.hourly;
+            const iconName = data.isDay[index]
+                ? weatherIcons.value[data.weatherCode[index]].iconDay
+                : weatherIcons.value[data.weatherCode[index]].iconNight;
+
+            return `/weather-icons/${iconName}.svg`;
+        } else if (interval === "daily") {
+            data = weatherData.value.daily;
+            const iconName =
+                weatherIcons.value[data.weatherCode[index]].iconDay;
+
+            return `/weather-icons/${iconName}.svg`;
+        } else if (interval === "current") {
+            data = weatherData.value.current;
+            const iconName = weatherData.value.current.isDay
+                ? weatherIcons.value[data.weatherCode].iconDay
+                : weatherIcons.value[data.weatherCode].iconNight;
+
+            return `/weather-icons/${iconName}.svg`;
+        }
+
         const iconName = weatherData.value.current.isDay
-            ? weatherIcons.value[weatherData.value.daily.weatherCode[index]]
-                  .iconDay
-            : weatherIcons.value[weatherData.value.daily.weatherCode[index]]
-                  .iconNight;
+            ? weatherIcons.value[data.weatherCode[index]].iconDay
+            : weatherIcons.value[data.weatherCode[index]].iconNight;
 
         return `/weather-icons/${iconName}.svg`;
     }
 
-    function getWeatherDescription(index = 0) {
-        return weatherIcons.value[weatherData.value.daily.weatherCode[index]]
-            .name;
+    /**
+     * Returns weather description.
+     *
+     * @param {number} index - specifies index of measurement
+     * @param {string} interval - specifies time interval of weather measurement. Can be "current" (default), "daily" or "hourly".
+
+     * @returns {string} Weather description.
+     */
+    function getWeatherDescription(index = 0, interval) {
+        if (interval === "hourly") {
+            return weatherIcons.value[
+                weatherData.value.hourly.weatherCode[index]
+            ].name;
+        } else if (interval === "daily") {
+            return weatherIcons.value[
+                weatherData.value.daily.weatherCode[index]
+            ].name;
+        } else if (interval === "current") {
+            return weatherIcons.value[weatherData.value.current.weatherCode]
+                .name;
+        }
     }
 
     async function updateWeatherData() {
         console.log("update");
         const location = await fetchGeocodingData(cityName);
         weatherData.value = await fetchWeatherData(location);
+
+        console.log(weatherData.value);
     }
 
     return {

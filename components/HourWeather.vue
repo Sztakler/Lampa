@@ -1,27 +1,53 @@
 <template>
     <div class="container">
         <div class="hour">{{ calculateTimeString(time) }}</div>
-        <img src="@/assets/svg/sunny.svg" alt="Sunny icon" />
+        <img
+            class="monochromatic"
+            :src="weatherStore.getIconPath(index, 'hourly')"
+            :alt="weatherStore.getWeatherDescription(index, 'hourly')"
+        />
         <div class="progress-bar">
             <div class="bar">
                 <div class="circle"></div>
                 <div
                     class="line"
-                    :style="{ width: calculateProgressbarLength(value) }"
+                    :style="{ width: calculateProgressbarLength(100) }"
                 ></div>
             </div>
-            {{ value }}
+            {{ getMeasurementValue(option) }}
         </div>
     </div>
 </template>
 
 <script setup>
-const { time, value } = defineProps(["time", "value"]);
+const { time, option } = defineProps(["time", "option"]);
+const index = ref(new Date().getHours() + time - 1);
+
+function getMeasurementValue(option) {
+    console.log(option);
+    const data = weatherData.value.hourly;
+    if (option === "precipitationProbability") {
+        return Math.round(data.precipitationProbability[index.value]) + " %";
+    } else if (option === "precipitationRate") {
+        return Math.round(data.precipitation[index.value]) + " mm/h";
+    } else if (option === "temperature") {
+        return Math.round(data.temperature2m[index.value]) + " °C";
+    } else if (option === "wind") {
+        return Math.round(data.windSpeed10m[index.value]) + " km/h";
+    } else if (option === "uv") {
+        return "UV index " + Math.round(data.uvIndex[index.value]);
+    } else if (option === "airQuality") {
+        return "n/a";
+    }
+
+    return "n/a";
+}
 
 function calculateProgressbarLength(value) {
-    let maxLength = 150;
-    let number = value.match(/\d+/g).join("");
-    return (number / 100) * maxLength + "px";
+    // let maxLength = 150;
+    // let number = value.match(/\d+/g).join("");
+    // return (number / 100) * maxLength + "px";
+    return "100px";
 }
 
 function calculateTimeString(i) {
@@ -32,18 +58,24 @@ function calculateTimeString(i) {
 
     return hour + ":00";
 }
+
+import { useWeatherStore } from "@/stores/weather";
+import { storeToRefs } from "pinia";
+
+const weatherStore = useWeatherStore();
+const { weatherData, weatherIcons } = storeToRefs(weatherStore);
 </script>
 
 <style scoped>
 img {
-    height: 32px;
+    height: 48px;
     width: auto;
 }
 
 .container {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
 }
 
 .progress-bar {

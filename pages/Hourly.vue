@@ -6,53 +6,54 @@
             </ArrowButton>
         </header>
 
-        <ul>
-            <li v-for="i in 24">
-                <HourWeather
-                    :time="i"
-                    :value="Math.floor(Math.random() * 100) + '%'"
-                ></HourWeather>
-            </li>
-        </ul>
-
         <nav id="options">
             <TextButton
-                @click="selectedOption = 0"
-                :active="selectedOption === 0"
+                @click="updateSelectedOption('precipitationProbability')"
+                :active="selectedOption === 'precipitationProbability'"
                 :font-weight="400"
                 >Precipitation probability</TextButton
             >
             <TextButton
-                @click="selectedOption = 1"
-                :active="selectedOption === 1"
+                @click="updateSelectedOption('precipitationRate')"
+                :active="selectedOption === 'precipitationRate'"
                 :font-weight="400"
                 >Precipitation rate</TextButton
             >
             <TextButton
-                @click="selectedOption = 2"
-                :active="selectedOption === 2"
+                @click="updateSelectedOption('temperature')"
+                :active="selectedOption === 'temperature'"
                 :font-weight="400"
                 >Temperature</TextButton
             >
             <TextButton
-                @click="selectedOption = 3"
-                :active="selectedOption === 3"
+                @click="updateSelectedOption('wind')"
+                :active="selectedOption === 'wind'"
                 :font-weight="400"
                 >Wind</TextButton
             >
             <TextButton
-                @click="selectedOption = 4"
-                :active="selectedOption === 4"
+                @click="updateSelectedOption('uv')"
+                :active="selectedOption === 'uv'"
                 :font-weight="400"
                 >UV</TextButton
             >
             <TextButton
-                @click="selectedOption = 5"
-                :active="selectedOption === 5"
+                @click="updateSelectedOption('airQuality')"
+                :active="selectedOption === 'airQuality'"
                 :font-weight="400"
                 >Air quality</TextButton
             >
         </nav>
+
+        <ul>
+            <li v-for="i in 24">
+                <HourWeather
+                    :time="i"
+                    :option="selectedOption"
+                    :key="i"
+                ></HourWeather>
+            </li>
+        </ul>
     </article>
 </template>
 
@@ -61,7 +62,12 @@ function calculateProgressbarLength() {
     return Math.random() * 200 + "px";
 }
 
-const selectedOption = ref(2);
+const selectedOption = ref("temperature");
+
+function updateSelectedOption(newOption) {
+    selectedOption.value = newOption;
+    console.log("update", selectedOption.value);
+}
 
 onMounted(() => {
     const navElement = document.querySelector("#options");
