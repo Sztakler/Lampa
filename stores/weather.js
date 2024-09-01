@@ -34,15 +34,8 @@ const params = {
         "snow_depth",
         "weather_code",
         "surface_pressure",
-        "cloud_cover",
         "visibility",
         "wind_speed_10m",
-        "wind_direction_10m",
-        "wind_gusts_10m",
-        "temperature_80m",
-        "uv_index",
-        "uv_index_clear_sky",
-        "is_day",
     ],
     daily: [
         "weather_code",
@@ -65,11 +58,9 @@ const params = {
         "wind_speed_10m_max",
         "wind_gusts_10m_max",
         "wind_direction_10m_dominant",
-        "shortwave_radiation_sum",
-        "et0_fao_evapotranspiration",
     ],
+    timezone: "auto",
 };
-
 const weatherURL = "https://api.open-meteo.com/v1/forecast";
 const geocodingURL = "https://nominatim.openstreetmap.org/search";
 
@@ -125,7 +116,7 @@ async function fetchWeatherData(location) {
         const hourly = response.hourly();
         const daily = response.daily();
 
-        // Note: The order of weather variables in the URL query and the indices below need to match
+        // Note: The order of weather variables in the URL query and the indices below need to match!
         const weatherData = {
             current: {
                 time: new Date(
@@ -165,15 +156,8 @@ async function fetchWeatherData(location) {
                 snowDepth: hourly.variables(9).valuesArray(),
                 weatherCode: hourly.variables(10).valuesArray(),
                 surfacePressure: hourly.variables(11).valuesArray(),
-                cloudCover: hourly.variables(12).valuesArray(),
-                visibility: hourly.variables(13).valuesArray(),
-                windSpeed10m: hourly.variables(14).valuesArray(),
-                windDirection10m: hourly.variables(15).valuesArray(),
-                windGusts10m: hourly.variables(16).valuesArray(),
-                temperature80m: hourly.variables(17).valuesArray(),
-                uvIndex: hourly.variables(18).valuesArray(),
-                uvIndexClearSky: hourly.variables(19).valuesArray(),
-                isDay: hourly.variables(20).valuesArray(),
+                visibility: hourly.variables(12).valuesArray(),
+                windSpeed10m: hourly.variables(13).valuesArray(),
             },
             daily: {
                 time: range(
@@ -201,8 +185,6 @@ async function fetchWeatherData(location) {
                 windSpeed10mMax: daily.variables(17).valuesArray(),
                 windGusts10mMax: daily.variables(18).valuesArray(),
                 windDirection10mDominant: daily.variables(19).valuesArray(),
-                shortwaveRadiationSum: daily.variables(20).valuesArray(),
-                et0FaoEvapotranspiration: daily.variables(21).valuesArray(),
             },
         };
         return weatherData;

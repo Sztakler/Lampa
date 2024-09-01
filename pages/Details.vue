@@ -11,35 +11,146 @@
                 <div class="details">
                     <h4>Current weather</h4>
                     <ul>
-                        <li><h6>Temperature: 30 °C</h6></li>
-                        <li><h6>Feels like: 32 °C</h6></li>
-                        <li><h6>Humidity: 55 %</h6></li>
-                        <li><h6>Pressure: 1023 hPa</h6></li>
+                        <li>
+                            <h6>
+                                Temperature:
+                                {{
+                                    Math.round(
+                                        weatherData.current.temperature2m,
+                                    )
+                                }}
+                                °C
+                            </h6>
+                        </li>
+                        <li>
+                            <h6>
+                                Feels like:
+                                {{
+                                    Math.round(
+                                        weatherData.current.apparentTemperature,
+                                    )
+                                }}
+                                °C
+                            </h6>
+                        </li>
+                        <li>
+                            <h6>
+                                Humidity:
+                                {{
+                                    Math.round(
+                                        weatherData.current.relativeHumidity2m,
+                                    )
+                                }}
+                                %
+                            </h6>
+                        </li>
+                        <li>
+                            <h6>
+                                Pressure:
+                                {{
+                                    Math.round(
+                                        weatherData.current.surfacePressure,
+                                    )
+                                }}
+                                hPa
+                            </h6>
+                        </li>
                     </ul>
                 </div>
-                <img src="@/assets/svg/sunny.svg" alt="Sunny icon" />
+                <img
+                    class="monochromatic"
+                    :src="weatherStore.getIconPath(0, 'current')"
+                    :alt="weatherStore.getWeatherDescription(0, 'current')"
+                />
             </div>
 
             <div class="weather">
                 <div class="details">
                     <h4>Precipitation</h4>
                     <ul>
-                        <li><h6>Probability: 5 %</h6></li>
-                        <li><h6>Rate: 4.7 mm/h (moderate rain)</h6></li>
+                        <li>
+                            <h6>
+                                Probability:
+                                {{
+                                    Math.round(
+                                        weatherData.daily
+                                            .precipitationProbabilityMax[0],
+                                    )
+                                }}
+                                %
+                            </h6>
+                        </li>
+                        <li>
+                            <h6>
+                                Rate:
+                                {{
+                                    Math.round(
+                                        weatherData.current.precipitation,
+                                    )
+                                }}
+                                mm/h ({{
+                                    getPrecipitationDescription(
+                                        weatherData.current.precipitation,
+                                    )
+                                }})
+                            </h6>
+                        </li>
                     </ul>
                 </div>
-                <img src="@/assets/svg/rain.svg" alt="Rain icon" />
+                <img
+                    class="monochromatic"
+                    src="/weather-icons/raindrop.svg"
+                    alt="Raindrop icon"
+                />
             </div>
 
             <div class="weather">
                 <div class="details">
                     <h4>Wind</h4>
                     <ul>
-                        <li><h6>Speed: 4.7 km/h (light breeze)</h6></li>
-                        <li><h6>Direction: South-East</h6></li>
+                        <li>
+                            <h6>
+                                Speed:
+                                {{
+                                    Math.round(weatherData.current.windSpeed10m)
+                                }}
+                                km/h ({{
+                                    getWindDescription(
+                                        weatherData.current.windSpeed10m,
+                                    )
+                                }})
+                            </h6>
+                        </li>
+                        <li>
+                            <h6>
+                                Gust:
+                                {{
+                                    Math.round(weatherData.current.windGusts10m)
+                                }}
+                                km/h ({{
+                                    getWindDescription(
+                                        weatherData.current.windGusts10m,
+                                    )
+                                }})
+                            </h6>
+                        </li>
+                        <li>
+                            <h6>
+                                Direction:
+                                {{
+                                    getWindDirection(
+                                        weatherData.current.windDirection10m,
+                                    )
+                                }}
+                            </h6>
+                        </li>
                     </ul>
                 </div>
-                <img src="@/assets/svg/wind.svg" alt="Wind icon" />
+                <img
+                    class="monochromatic"
+                    src="/weather-icons/wind.svg"
+                    alt="Wind icon"
+                />
             </div>
 
             <div class="weather">
@@ -47,15 +158,20 @@
                     <h4>Sunset and Sunrise</h4>
                     <div class="horizontal-list">
                         <div class="captioned-icon">
-                            <img src="@/assets/svg/sunny.svg" alt="Day icon" />
-                            <h6>05:59</h6>
+                            <img
+                                class="monochromatic"
+                                src="/weather-icons/sunrise.svg"
+                                alt="Wind icon"
+                            />
+                            <h6>Unavailable</h6>
                         </div>
                         <div class="captioned-icon">
                             <img
-                                src="@/assets/svg/clear-night.svg"
-                                alt="Night icon"
+                                class="monochromatic"
+                                src="/weather-icons/sunset.svg"
+                                alt="Wind icon"
                             />
-                            <h6>19:45</h6>
+                            <h6>Unavailable</h6>
                         </div>
                     </div>
                 </div>
@@ -64,7 +180,25 @@
     </article>
 </template>
 
-<script lang="ts" setup></script>
+<script setup>
+import { useWeatherStore } from "@/stores/weather";
+import { storeToRefs } from "pinia";
+
+const weatherStore = useWeatherStore();
+const { weatherData, weatherIcons } = storeToRefs(weatherStore);
+
+function getPrecipitationDescription() {
+    return "No description available";
+}
+
+function getWindDescription() {
+    return "No description available";
+}
+
+function getWindDirection() {
+    return "No description available";
+}
+</script>
 
 <style scoped>
 article {
