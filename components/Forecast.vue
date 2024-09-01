@@ -1,7 +1,11 @@
 <template>
     <nav>
-        <TextButton><NuxtLink to="/">Today</NuxtLink></TextButton>
-        <TextButton><NuxtLink to="/tomorrow">Tomorrow</NuxtLink></TextButton>
+        <TextButton>
+            <NuxtLink to="/">Today</NuxtLink>
+        </TextButton>
+        <TextButton>
+            <NuxtLink to="/tomorrow">Tomorrow</NuxtLink>
+        </TextButton>
         <TextButton>
             <NuxtLink to="/weekly">Weekly</NuxtLink>
         </TextButton>
@@ -10,11 +14,14 @@
     <div v-if="weatherData" class="weather">
         <header>
             <h2>{{ calculateDateString(dayIndex) }}, {{ cityName }}</h2>
-
             <div class="weather-icon">
-                <img src="@/assets/svg/sunny.svg" alt="Sunny icon" />
+                <img
+                    class="monochromatic"
+                    :src="weatherStore.getIconPath(dayIndex)"
+                    :alt="weatherStore.getWeatherDescription(dayIndex)"
+                />
                 <h2>
-                    {{ weatherCodes[weatherData.current.weatherCode] }}
+                    {{ weatherIcons[weatherData.current.weatherCode].name }}
                 </h2>
             </div>
             <div class="weather-info">
@@ -23,10 +30,7 @@
                 </div>
                 <h6>
                     Feels like
-                    {{
-                        Math.round(weatherData?.current.apparentTemperature) ||
-                        "N/A"
-                    }}
+                    {{ Math.round(weatherData?.current.apparentTemperature) }}
                     °C
                 </h6>
             </div>
@@ -48,7 +52,13 @@
                                 })
                             }}
                         </h5>
-                        <img src="@/assets/svg/cloudy.svg" alt="Cloudy icon" />
+                        <img
+                            class="monochromatic"
+                            :src="weatherStore.getIconPath(dayIndex + 1)"
+                            :alt="
+                                weatherStore.getWeatherDescription(dayIndex + 1)
+                            "
+                        />
                         <h6>
                             {{
                                 Math.round(
@@ -70,8 +80,11 @@
                             }}
                         </h5>
                         <img
-                            src="@/assets/svg/rain&thunderstorm.svg"
-                            alt="Rain and thunderstorm icon"
+                            class="monochromatic"
+                            :src="weatherStore.getIconPath(dayIndex + 2)"
+                            :alt="
+                                weatherStore.getWeatherDescription(dayIndex + 2)
+                            "
                         />
                         <h6>
                             {{
@@ -93,7 +106,13 @@
                                 })
                             }}
                         </h5>
-                        <img src="@/assets/svg/rain.svg" alt="Rain icon" />
+                        <img
+                            class="monochromatic"
+                            :src="weatherStore.getIconPath(dayIndex + 3)"
+                            :alt="
+                                weatherStore.getWeatherDescription(dayIndex + 3)
+                            "
+                        />
                         <h6>
                             {{
                                 Math.round(
@@ -113,7 +132,11 @@
                 <div class="next-days">
                     <div class="day-forecast">
                         <h5>Humidity</h5>
-                        <img src="@/assets/svg/cloudy.svg" alt="Cloudy icon" />
+                        <img
+                            class="monochromatic"
+                            src="/weather-icons/humidity.svg"
+                            alt="Humidity icon"
+                        />
                         <h6>
                             {{ weatherData.current.relativeHumidity2m }}
                             %
@@ -123,8 +146,9 @@
                     <div class="day-forecast">
                         <h5>Pressure</h5>
                         <img
-                            src="@/assets/svg/rain&thunderstorm.svg"
-                            alt="Rain and thunderstorm icon"
+                            class="monochromatic"
+                            src="/weather-icons/barometer.svg"
+                            alt="Barometer icon"
                         />
                         <h6>
                             {{
@@ -136,7 +160,11 @@
                     <VerticalDivider />
                     <div class="day-forecast">
                         <h5>Wind</h5>
-                        <img src="@/assets/svg/rain.svg" alt="Rain icon" />
+                        <img
+                            class="monochromatic"
+                            src="/weather-icons/wind.svg"
+                            alt="Wind icon"
+                        />
                         <h6>
                             {{
                                 Math.round(
@@ -150,7 +178,11 @@
                     <VerticalDivider />
                     <div class="day-forecast">
                         <h5>Visibility</h5>
-                        <img src="@/assets/svg/rain.svg" alt="Rain icon" />
+                        <img
+                            class="monochromatic"
+                            src="/weather-icons/compass.svg"
+                            alt="Compass icon"
+                        />
                         <h6>
                             {{
                                 weatherData.hourly.visibility[
@@ -176,36 +208,11 @@
 <script setup>
 const { dayIndex } = defineProps(["dayIndex"]);
 
-const weatherCodes = {
-    0: "Clear sky",
-    1: "Mainly clear",
-    2: "Partly cloudy",
-    3: "Overcast",
-    45: "Fog",
-    48: "Depositing rime fog",
-    51: "Light drizzle",
-    53: "Moderate drizzle",
-    55: "Dense drizzle",
-    56: "Freezing light drizzle",
-    57: "Freezing dense drizzle",
-    61: "Slight rain",
-    63: "Moderate rain",
-    65: "Heavy rain",
-    66: "Freezing light rain",
-    67: "Freezing heavy rain",
-    71: "Light snow fall",
-    73: "Moderate snow fall",
-    75: "Heavy snow fall",
-    77: "Snow grains",
-    80: "Slight showers",
-    81: "Moderate showers",
-    82: "Violent showers",
-    85: "Slight snow showers",
-    86: "Heavy snow showers",
-    95: "Thunderstorm",
-    96: "Thunderstorm with slight hail",
-    99: "Thunderstorm with heavy hail",
-};
+import { useWeatherStore } from "@/stores/weather";
+import { storeToRefs } from "pinia";
+
+const weatherStore = useWeatherStore();
+const { cityName, weatherData, weatherIcons } = storeToRefs(weatherStore);
 
 function calculateDateString(dayIndex, options) {
     let date = new Date();
@@ -220,27 +227,6 @@ function calculateDateString(dayIndex, options) {
 
     return dateString;
 }
-
-import { useWeatherStore } from "@/stores/weather";
-import { storeToRefs } from "pinia";
-
-const weatherStore = useWeatherStore();
-const { name, doubleCount, count, cityName, weatherData } =
-    storeToRefs(weatherStore);
-const { increment, updateWeatherData } = weatherStore;
-console.log(name, cityName);
-
-useFetch(async () => {
-    await updateWeatherData();
-});
-
-watch(cityName, async (newValue) => {
-    await weatherStore.updateWeatherData();
-});
-
-useAsyncData(async () => {
-    weatherStore.updateWeatherData();
-});
 </script>
 
 <style scoped>
@@ -300,6 +286,17 @@ h2 {
     padding-bottom: 8px;
 }
 
+.weather-icon > img {
+    height: 128px;
+    width: auto;
+    margin: -32px;
+}
+
+.day-forecast > img {
+    height: 48px;
+    width: auto;
+}
+
 .weather-info {
     display: flex;
     flex-direction: column;
@@ -330,12 +327,15 @@ h2 {
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
 }
 
 .container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 .loading {

@@ -9,9 +9,20 @@ import { useWeatherStore } from "@/stores/weather";
 import { storeToRefs } from "pinia";
 
 const weatherStore = useWeatherStore();
-const { name, doubleCount, count, cityName } = storeToRefs(weatherStore);
-const { increment } = weatherStore;
-console.log(name, cityName);
+const { cityName } = storeToRefs(weatherStore);
+const { updateWeatherData } = weatherStore;
+
+useFetch(async () => {
+    await weatherStore.updateWeatherData();
+});
+
+watch(cityName, async (newValue) => {
+    await weatherStore.updateWeatherData();
+});
+
+useAsyncData(async () => {
+    await weatherStore.updateWeatherData();
+});
 </script>
 
 <style scoped>

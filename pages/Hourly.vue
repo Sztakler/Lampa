@@ -15,7 +15,7 @@
             </li>
         </ul>
 
-        <nav>
+        <nav id="options">
             <TextButton
                 @click="selectedOption = 0"
                 :active="selectedOption === 0"
@@ -64,9 +64,10 @@ function calculateProgressbarLength() {
 const selectedOption = ref(2);
 
 onMounted(() => {
-    const navElement = document.querySelector("nav");
+    const navElement = document.querySelector("#options");
     navElement.addEventListener("wheel", (event) => {
         event.preventDefault();
+        console.log("nav");
         navElement.scrollLeft += event.deltaY;
     });
 });
@@ -108,7 +109,7 @@ nav {
     display: flex;
     gap: 24px;
     padding: 8px;
-    overflow-x: scroll; /* Wymuszony przewijanie w poziomie */
+    overflow-x: scroll; /* Wymuszone przewijanie w poziomie */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
 }

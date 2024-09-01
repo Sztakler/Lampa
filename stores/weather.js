@@ -83,7 +83,6 @@ async function fetchGeocodingData(cityName) {
         }
         const data = await response.json();
         if (data && data.length > 0) {
-            console.log(data[0].lat, data[0].lon, cityName.value);
             return {
                 latitude: data[0].lat,
                 longitude: data[0].lon,
@@ -99,7 +98,6 @@ async function fetchGeocodingData(cityName) {
 
 async function fetchWeatherData(location) {
     try {
-        console.log("location", location);
         if (location) {
             params.latitude = location.latitude;
             params.longitude = location.longitude;
@@ -207,7 +205,6 @@ async function fetchWeatherData(location) {
                 et0FaoEvapotranspiration: daily.variables(21).valuesArray(),
             },
         };
-        console.log(weatherData);
         return weatherData;
     } catch (error) {
         console.error("Error fetching weather data:", error);
@@ -218,28 +215,176 @@ async function fetchWeatherData(location) {
 export const useWeatherStore = defineStore("weather", () => {
     const cityName = ref("");
     const weatherData = ref(null);
+    const weatherIcons = ref({
+        0: {
+            name: "Clear sky",
+            iconDay: "clear-day",
+            iconNight: "clear-night",
+        },
+        1: {
+            name: "Mainly clear",
+            iconDay: "clear-day",
+            iconNight: "clear-night",
+        },
+        2: {
+            name: "Partly cloudy",
+            iconDay: "partly-cloudy-day",
+            iconNight: "partly-cloudy-night",
+        },
+        3: {
+            name: "Overcast",
+            iconDay: "overcast-day",
+            iconNight: "overcast-night",
+        },
+        45: {
+            name: "Fog",
+            iconDay: "fog-day",
+            iconNight: "fog-night",
+        },
+        48: {
+            name: "Depositing rime fog",
+            iconDay: "partly-cloudy-day",
+            iconNight: "partly-cloudy-night",
+        },
+        51: {
+            name: "Light drizzle",
+            iconDay: "partly-cloudy-day-drizzle",
+            iconNight: "partly-cloudy-night-drizzle",
+        },
+        53: {
+            name: "Moderate drizzle",
+            iconDay: "partly-cloudy-day-drizzle",
+            iconNight: "partly-cloudy-night-drizzle",
+        },
+        55: {
+            name: "Dense drizzle",
+            iconDay: "partly-cloudy-day-drizzle",
+            iconNight: "partly-cloudy-night-drizzle",
+        },
+        56: {
+            name: "Freezing light drizzle",
+            iconDay: "partly-cloudy-day-drizzle",
+            iconNight: "partly-cloudy-night-drizzle",
+        },
+        57: {
+            name: "Freezing light drizzle",
+            iconDay: "partly-cloudy-day-drizzle",
+            iconNight: "partly-cloudy-night-drizzle",
+        },
+        61: {
+            name: "Slight rain",
+            iconDay: "partly-cloudy-day-rain",
+            iconNight: "partly-cloudy-night-rain",
+        },
+        63: {
+            name: "Moderate rain",
+            iconDay: "partly-cloudy-day-rain",
+            iconNight: "partly-cloudy-night-rain",
+        },
+        65: {
+            name: "Heavy rain",
+            iconDay: "partly-cloudy-day-rain",
+            iconNight: "partly-cloudy-night-rain",
+        },
+        66: {
+            name: "Freezing light rain",
+            iconDay: "partly-cloudy-day-sleet",
+            iconNight: "partly-cloudy-night-sleet",
+        },
+        67: {
+            name: "Freezing heavy rain",
+            iconDay: "partly-cloudy-day-sleet",
+            iconNight: "partly-cloudy-night-sleet",
+        },
+        71: {
+            name: "Light snow fall",
+            iconDay: "partly-cloudy-day-snow",
+            iconNight: "partly-cloudy-night-snow",
+        },
+        73: {
+            name: "Moderate snow fall",
+            iconDay: "partly-cloudy-day-snow",
+            iconNight: "partly-cloudy-night-snow",
+        },
+        75: {
+            name: "Heavy snow fall",
+            iconDay: "partly-cloudy-day-snow",
+            iconNight: "partly-cloudy-night-snow",
+        },
+        77: {
+            name: "Snow grains",
+            iconDay: "partly-cloudy-day-snow",
+            iconNight: "partly-cloudy-night-snow",
+        },
+        80: {
+            name: "Light showers",
+            iconDay: "partly-cloudy-day-rain",
+            iconNight: "partly-cloudy-night-rain",
+        },
+        81: {
+            name: "Moderate showers",
+            iconDay: "partly-cloudy-day-rain",
+            iconNight: "partly-cloudy-night-rain",
+        },
+        82: {
+            name: "Violent showers",
+            iconDay: "partly-cloudy-day-rain",
+            iconNight: "partly-cloudy-night-rain",
+        },
+        85: {
+            name: "Slight snow showers",
+            iconDay: "partly-cloudy-day-snow",
+            iconNight: "partly-cloudy-night-snow",
+        },
+        86: {
+            name: "Heavy snow showers",
+            iconDay: "partly-cloudy-day-snow",
+            iconNight: "partly-cloudy-night-snow",
+        },
+        95: {
+            name: "Thunderstorm",
+            iconDay: "thunderstorms-day",
+            iconNight: "thunderstorms-night",
+        },
+        96: {
+            name: "Thunderstorm with slight hail",
+            iconDay: "thunderstorms-day",
+            iconNight: "thunderstorms-night",
+        },
+        99: {
+            name: "Thunderstorm with heavy hail",
+            iconDay: "thunderstorms-day",
+            iconNight: "thunderstorms-night",
+        },
+    });
+
+    function getIconPath(index = 0) {
+        const iconName = weatherData.value.current.isDay
+            ? weatherIcons.value[weatherData.value.daily.weatherCode[index]]
+                  .iconDay
+            : weatherIcons.value[weatherData.value.daily.weatherCode[index]]
+                  .iconNight;
+
+        return `/weather-icons/${iconName}.svg`;
+    }
+
+    function getWeatherDescription(index = 0) {
+        return weatherIcons.value[weatherData.value.daily.weatherCode[index]]
+            .name;
+    }
 
     async function updateWeatherData() {
         console.log("update");
         const location = await fetchGeocodingData(cityName);
         weatherData.value = await fetchWeatherData(location);
-        console.log(weatherData);
-    }
-
-    const count = ref(0);
-    const name = ref("Eduardo");
-    const doubleCount = computed(() => count.value * 2);
-    function increment() {
-        count.value++;
     }
 
     return {
         cityName,
-        count,
-        name,
-        doubleCount,
-        increment,
         updateWeatherData,
+        getIconPath,
+        getWeatherDescription,
         weatherData,
+        weatherIcons,
     };
 });

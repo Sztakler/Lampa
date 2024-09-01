@@ -1,12 +1,20 @@
 <template>
     <div class="container">
         <div class="left">
-            <h4>{{ calculateDateString(index) }}</h4>
-            <h6>Sunny</h6>
+            <h4>{{ calculateDateString(index - 1) }}</h4>
+            <h6>{{ weatherStore.getWeatherDescription(index - 1) }}</h6>
         </div>
         <div class="right">
-            <img src="@/assets/svg/sunny.svg" alt="Sunny icon" />
-            <h3>30 °C</h3>
+            <img
+                class="monochromatic"
+                :src="weatherStore.getIconPath(index - 1)"
+                :alt="weatherStore.getWeatherDescription(index - 1)"
+            />
+            <h3>
+                {{
+                    Math.round(weatherData.daily.temperature2mMax[index - 1])
+                }}°C
+            </h3>
         </div>
     </div>
 </template>
@@ -27,6 +35,12 @@ function calculateDateString(index) {
 
     return dateString;
 }
+
+import { useWeatherStore } from "@/stores/weather";
+import { storeToRefs } from "pinia";
+
+const weatherStore = useWeatherStore();
+const { weatherData } = storeToRefs(weatherStore);
 </script>
 
 <style scoped>
