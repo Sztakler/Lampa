@@ -163,7 +163,7 @@
                                 src="/weather-icons/sunrise.svg"
                                 alt="Wind icon"
                             />
-                            <h6>Unavailable</h6>
+                            <h6>{{ weatherData.daily.sunrise[0] }}</h6>
                         </div>
                         <div class="captioned-icon">
                             <img
@@ -171,7 +171,7 @@
                                 src="/weather-icons/sunset.svg"
                                 alt="Wind icon"
                             />
-                            <h6>Unavailable</h6>
+                            <h6>{{ weatherData.daily.sunset[0] }}</h6>
                         </div>
                     </div>
                 </div>
@@ -185,18 +185,110 @@ import { useWeatherStore } from "@/stores/weather";
 import { storeToRefs } from "pinia";
 
 const weatherStore = useWeatherStore();
-const { weatherData, weatherIcons } = storeToRefs(weatherStore);
+const { weatherData } = storeToRefs(weatherStore);
 
-function getPrecipitationDescription() {
-    return "No description available";
+/**
+ * Returns precipitation description based on https://en.wikipedia.org/wiki/Precipitation_types and https://www.baranidesign.com/faq-articles/2020/1/19/rain-rate-intensity-classification rain rate intensity classification.
+ *
+ * @param {rainRate} rate of rain in mm/h.
+ */
+function getPrecipitationDescription(rainRate) {
+    if (weatherData.value.current.snowfall > 0) {
+        return "Snowfall";
+    }
+
+    switch (true) {
+        case rainRate < 0.1:
+            return "No rain";
+        case rainRate < 2.5:
+            return "Light rain";
+        case rainRate < 7.5:
+            return "Moderate rain";
+        case rainRate < 50:
+            return "Heavy rain";
+        default:
+            return "Violent rain";
+    }
 }
 
-function getWindDescription() {
-    return "No description available";
+/**
+ * Returns precipitation description based on Beaufort scale https://en.wikipedia.org/wiki/Beaufort_scale
+ *
+ * @param {windSpeed} Wind speed in km/h.
+ */
+function getWindDescription(windSpeed) {
+    switch (true) {
+        case windSpeed < 1:
+            return "Calm";
+        case windSpeed < 5:
+            return "Light air";
+        case windSpeed < 11:
+            return "Light breeze";
+        case windSpeed < 19:
+            return "Gentle breeze";
+        case windSpeed < 28:
+            return "Moderate breeze";
+        case windSpeed < 38:
+            return "Fresh breeze";
+        case windSpeed < 49:
+            return "Strong breeze";
+        case windSpeed < 61:
+            return "Moderate gale";
+        case windSpeed < 74:
+            return "Gale";
+        case windSpeed < 88:
+            return "Strong gale";
+        case windSpeed < 102:
+            return "Storm";
+        case windSpeed < 117:
+            return "Violent storm";
+        default:
+            return "Hurricane";
+    }
 }
 
-function getWindDirection() {
-    return "No description available";
+/**
+ * Returns cardinal wind direction based on wind direction in degrees
+ *
+ * @param {degree} Wind direction in degrees.
+ */
+function getWindDirection(degree) {
+    switch (true) {
+        case degree < 10:
+            return "N";
+        case degree < 30:
+            return "N/NE";
+        case degree < 50:
+            return "NE";
+        case degree < 70:
+            return "E/NE";
+        case degree < 100:
+            return "E";
+        case degree < 120:
+            return "E/SE";
+        case degree < 140:
+            return "SE";
+        case degree < 160:
+            return "S/SE";
+        case degree < 190:
+            return "S";
+        case degree < 210:
+            return "S/SW";
+        case degree < 230:
+            return "SW";
+        case degree < 250:
+            return "W/SW";
+        case degree < 280:
+            return "W";
+        case degree < 300:
+            return "W/NW";
+        case degree < 320:
+            return "NW";
+        case degree < 340:
+            return "N/NW";
+        default:
+            return "N";
+    }
 }
 </script>
 

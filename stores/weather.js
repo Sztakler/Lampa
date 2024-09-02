@@ -91,6 +91,31 @@ async function fetchGeocodingData(cityName) {
     }
 }
 
+async function fetchSuntimesApi(location, days) {
+    try {
+        const sunTimes = { sunrise: [], sunset: [] };
+
+        for (let i = 0; i < days; i++) {
+            let date = new Date();
+            date.setDate(date.getDate() + i);
+            const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+            const reponse = await fetch(
+                `https://api.sunrise-sunset.org/json?lat=${location.latitude}&lng=${location.longitude}&date=${dateString}`,
+            );
+            if (!reponse.ok) {
+                throw new Error("Sunrise-sunset response was not ok");
+            }
+            const data = await reponse.json();
+            sunTimes.sunrise.push(data.results.sunrise);
+            sunTimes.sunset.push(data.results.sunset);
+        }
+
+        return sunTimes;
+    } catch (error) {
+        console.error("Error fetching sunrise-sunset data:", error);
+    }
+}
+
 async function fetchWeatherData(location) {
     try {
         if (location) {
@@ -103,6 +128,9 @@ async function fetchWeatherData(location) {
                 { length: (stop - start) / step },
                 (_, i) => start + i * step,
             );
+
+        let days = 2;
+        const sunTimes = await fetchSuntimesApi(location, days);
 
         const responses = await fetchWeatherApi(weatherURL, params);
 
@@ -178,8 +206,10 @@ async function fetchWeatherData(location) {
                 temperature2mMin: daily.variables(2).valuesArray(),
                 apparentTemperatureMax: daily.variables(3).valuesArray(),
                 apparentTemperatureMin: daily.variables(4).valuesArray(),
-                sunrise: daily.variables(5).valuesArray(),
-                sunset: daily.variables(6).valuesArray(),
+                // sunrise: daily.variables(5).valuesArray(),
+                // sunset: daily.variables(6).valuesArray(),
+                sunrise: sunTimes.sunrise,
+                sunset: sunTimes.sunset,
                 daylightDuration: daily.variables(7).valuesArray(),
                 sunshineDuration: daily.variables(8).valuesArray(),
                 uvIndexMax: daily.variables(9).valuesArray(),
@@ -347,6 +377,8 @@ export const useWeatherStore = defineStore("weather", () => {
             iconNight: "thunderstorms-night",
         },
     });
+    const location = ref({ latitude: 0, longitude: 0 });
+    const sunTimes = ref({ sunrise: [], sunset: [] });
 
     /**
      * Calculates path to weather icon.
@@ -411,16 +443,19 @@ export const useWeatherStore = defineStore("weather", () => {
         }
     }
 
+    function getSunTimes() {}
+
     async function updateWeatherData() {
         console.log("update");
-        const location = await fetchGeocodingData(cityName);
-        weatherData.value = await fetchWeatherData(location);
+        location.value = await fetchGeocodingData(cityName);
+        weatherData.value = await fetchWeatherData(location.value);
 
         console.log(weatherData.value);
     }
 
     return {
         cityName,
+        location,
         updateWeatherData,
         getIconPath,
         getWeatherDescription,

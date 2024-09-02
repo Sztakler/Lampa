@@ -31,17 +31,37 @@
                     "
                 />
                 <h2>
-                    {{ weatherIcons[weatherData.current.weatherCode].name }}
+                    {{
+                        weatherStore.getWeatherDescription(
+                            dayIndex,
+                            dayIndex === 0 ? "current" : "daily",
+                        )
+                    }}
                 </h2>
             </div>
             <div class="weather-info">
                 <div class="temperature">
-                    {{ Math.round(weatherData?.current.temperature2m) }}°C
+                    {{
+                        dayIndex === 0
+                            ? Math.round(weatherData.current.temperature2m)
+                            : Math.round(
+                                  weatherData.daily.temperature2mMax[dayIndex],
+                              )
+                    }}°C
                 </div>
                 <h6>
                     Feels like
-                    {{ Math.round(weatherData?.current.apparentTemperature) }}
-                    °C
+                    {{
+                        dayIndex === 0
+                            ? Math.round(
+                                  weatherData.current.apparentTemperature,
+                              )
+                            : Math.round(
+                                  weatherData.daily.apparentTemperatureMax[
+                                      dayIndex
+                                  ],
+                              )
+                    }}°C
                 </h6>
             </div>
             <ArrowButton>
@@ -169,7 +189,11 @@
                             alt="Humidity icon"
                         />
                         <h6>
-                            {{ weatherData.current.relativeHumidity2m }}
+                            {{
+                                dayIndex === 0
+                                    ? weatherData.current.relativeHumidity2m
+                                    : weatherData.hourly.relativeHumidity2m[36]
+                            }}
                             %
                         </h6>
                     </div>
@@ -183,7 +207,14 @@
                         />
                         <h6>
                             {{
-                                Math.round(weatherData.current.surfacePressure)
+                                dayIndex === 0
+                                    ? Math.round(
+                                          weatherData.current.surfacePressure,
+                                      )
+                                    : Math.round(
+                                          weatherData.hourly
+                                              .surfacePressure[36],
+                                      )
                             }}
                             hPa
                         </h6>
@@ -199,10 +230,16 @@
                         <h6>
                             {{
                                 Math.round(
-                                    weatherData.current.windDirection10m,
+                                    weatherData.daily.windDirection10mDominant[
+                                        dayIndex
+                                    ],
                                 )
                             }}°
-                            {{ Math.round(weatherData.current.windSpeed10m) }}
+                            {{
+                                Math.round(
+                                    weatherData.daily.windSpeed10mMax[dayIndex],
+                                )
+                            }}
                             km/h
                         </h6>
                     </div>
