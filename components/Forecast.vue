@@ -13,7 +13,10 @@
 
     <div v-if="weatherData" class="weather">
         <header>
-            <h2>{{ calculateDateString(dayIndex) }}, {{ cityName }}</h2>
+            <h2>
+                {{ calculateDateString(dayIndex) }},
+                {{ weatherData.general.cityName }}
+            </h2>
             <div class="weather-icon">
                 <img
                     class="monochromatic"

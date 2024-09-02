@@ -81,6 +81,7 @@ async function fetchGeocodingData(cityName) {
             return {
                 latitude: data[0].lat,
                 longitude: data[0].lon,
+                name: data[0].name,
             };
         } else {
             return null;
@@ -98,9 +99,10 @@ async function fetchSuntimesApi(location, days) {
         for (let i = 0; i < days; i++) {
             let date = new Date();
             date.setDate(date.getDate() + i);
-            const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+            const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+            console.log(dateString);
             const reponse = await fetch(
-                `https://api.sunrise-sunset.org/json?lat=${location.latitude}&lng=${location.longitude}&date=${dateString}`,
+                `https://api.sunrise-sunset.org/json?lat=${location.latitude}&lng=${location.longitude}&date=${dateString}&tzid=${location.timezone}`,
             );
             if (!reponse.ok) {
                 throw new Error("Sunrise-sunset response was not ok");
@@ -129,9 +131,6 @@ async function fetchWeatherData(location) {
                 (_, i) => start + i * step,
             );
 
-        let days = 2;
-        const sunTimes = await fetchSuntimesApi(location, days);
-
         const responses = await fetchWeatherApi(weatherURL, params);
 
         // Process first location. Add a for-loop for multiple locations or weather models
@@ -140,6 +139,7 @@ async function fetchWeatherData(location) {
         // Attributes for timezone and location
         const utcOffsetSeconds = response.utcOffsetSeconds();
         const timezone = response.timezone();
+        location.timezone = timezone;
         const timezoneAbbreviation = response.timezoneAbbreviation();
         const latitude = response.latitude();
         const longitude = response.longitude();
@@ -150,6 +150,10 @@ async function fetchWeatherData(location) {
 
         // Note: The order of weather variables in the URL query and the indices below need to match!
         const weatherData = {
+            general: {
+                cityName: location.name,
+                timezone: timezone,
+            },
             current: {
                 time: new Date(
                     (Number(current.time()) + utcOffsetSeconds) * 1000,
@@ -208,8 +212,8 @@ async function fetchWeatherData(location) {
                 apparentTemperatureMin: daily.variables(4).valuesArray(),
                 // sunrise: daily.variables(5).valuesArray(),
                 // sunset: daily.variables(6).valuesArray(),
-                sunrise: sunTimes.sunrise,
-                sunset: sunTimes.sunset,
+                sunrise: [],
+                sunset: [],
                 daylightDuration: daily.variables(7).valuesArray(),
                 sunshineDuration: daily.variables(8).valuesArray(),
                 uvIndexMax: daily.variables(9).valuesArray(),
@@ -225,6 +229,12 @@ async function fetchWeatherData(location) {
                 windDirection10mDominant: daily.variables(19).valuesArray(),
             },
         };
+
+        let days = 2;
+        const sunTimes = await fetchSuntimesApi(location, days);
+        weatherData.daily.sunrise = sunTimes.sunrise;
+        weatherData.daily.sunset = sunTimes.sunset;
+        console.log(location);
         return weatherData;
     } catch (error) {
         console.error("Error fetching weather data:", error);
