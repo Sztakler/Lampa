@@ -1,48 +1,41 @@
-# name: Build and Deploy Vue Application to Github Pages
-# on:
-#     push:
-#         branch:
-#             -main
-# jobs:
-#   build_deploy_vue:
-#     runs-on: ubuntu-latest
-#     name: Build and Deploy Vue
-#     steps:
-#     - uses: actions/checkout@v2
-#     - id: Build-Deploy-Vue
-#       uses: thefrustrateddev/vue-deploy-github-pages@v1.0.0
-#       with:
-#         username: 'Sztakler'
-#         reponame: 'portfolio'
-#         token: ${{ secrets.GITHUB_TOKEN }} # no need to change this line this is used to create the branch in your application repository
-name: Deploy to GH Pages
-
+# https://github.com/actions/deploy-pages#usage
+name: Deploy to GitHub Pages
 on:
+    workflow_dispatch:
     push:
         branches:
             - main
-
 jobs:
-    build-deploy:
+    build:
         runs-on: ubuntu-latest
-
         steps:
-            - name: Checkout 🛎️
-              uses: actions/checkout@master
+            - uses: actions/checkout@v3
+            - run: corepack enable
+            - uses: actions/setup-node@v3
               with:
-                  persist-credentials: false
-
-            - name: Install 🔧
-              run: npm install
-
-            - name: Build 🏗️
-              run: npm run build
-              env:
-                  NODE_ENV: production
-
-            - name: Deploy to GH Pages 🚀
-              if: ${{ github.event_name != 'pull_request' }}
-              uses: peaceiris/actions-gh-pages@v3
+                  node-version: "20"
+            # Pick your own package manager and build script
+            - run: npm install
+            - run: npx nuxt build --preset github_pages
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
               with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: dist
+                  path: ./.output/public
+    # Deployment job
+    deploy:
+        # Add a dependency to the build job
+        needs: build
+        # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+        permissions:
+            pages: write # to deploy to Pages
+            id-token: write # to verify the deployment originates from an appropriate source
+        # Deploy to the github_pages environment
+        environment:
+            name: github_pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        # Specify runner + deployment step
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
