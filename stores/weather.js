@@ -466,7 +466,7 @@ export const useWeatherStore = defineStore("weather", () => {
         location.value = await fetchGeocodingData(cityName);
         weatherData.value = await fetchWeatherData(location.value);
 
-        console.log(weatherData.value);
+        // console.log(weatherData.value);
     }
 
     return {
