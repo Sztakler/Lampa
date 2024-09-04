@@ -56,11 +56,17 @@
                 </li>
             </ul>
         </div>
-        <div v-else>dupa</div>
+        <div v-else>Loading...</div>
     </article>
 </template>
 
 <script setup>
+import { useWeatherStore } from "@/stores/weather";
+import { storeToRefs } from "pinia";
+
+const weatherStore = useWeatherStore();
+const { weatherData } = storeToRefs(weatherStore);
+
 function calculateProgressbarLength() {
     return Math.random() * 200 + "px";
 }

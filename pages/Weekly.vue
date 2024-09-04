@@ -11,7 +11,7 @@
                 <DayWeather :index="i"></DayWeather>
             </li>
         </ul>
-        <div v-else>dada</div>
+        <div v-else>Loading...</div>
     </article>
 </template>
 

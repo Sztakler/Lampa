@@ -185,7 +185,7 @@
                 </div>
             </div>
         </div>
-        <div v-else>dudek</div>
+        <div v-else>Loading...</div>
     </article>
 </template>
 
