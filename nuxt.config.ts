@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     css: ["@/assets/css/main.css"],
     modules: ["@pinia/nuxt"],
     app: {
-        baseURL: "/Lampa/",
+        baseURL: "https://sztakler.github.io/Lampa/",
     },
     // routeRules: {
     //     "/": { prerender: false },
