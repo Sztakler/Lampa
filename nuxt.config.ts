@@ -4,6 +4,9 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
     css: ["@/assets/css/main.css"],
     modules: ["@pinia/nuxt"],
+    app: {
+        baseURL: "/Lampa",
+    },
     // routeRules: {
     //     "/": { prerender: false },
     // },
