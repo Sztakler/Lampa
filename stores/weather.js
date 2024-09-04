@@ -1,6 +1,9 @@
 import { fetchWeatherApi } from "openmeteo";
 import { defineStore } from "pinia";
 
+const config = useRuntimeConfig();
+const baseURL = config.public.baseURL;
+
 const params = {
     latitude: null,
     longitude: null,
@@ -411,20 +414,20 @@ export const useWeatherStore = defineStore("weather", () => {
                 ? weatherIcons.value[data.weatherCode[index]].iconDay
                 : weatherIcons.value[data.weatherCode[index]].iconNight;
 
-            return `/weather-icons/${iconName}.svg`;
+            return `${baseURL}/weather-icons/${iconName}.svg`;
         } else if (interval === "daily") {
             data = weatherData.value.daily;
             const iconName =
                 weatherIcons.value[data.weatherCode[index]].iconDay;
 
-            return `/weather-icons/${iconName}.svg`;
+            return `${baseURL}/weather-icons/${iconName}.svg`;
         } else if (interval === "current") {
             data = weatherData.value.current;
             const iconName = weatherData.value.current.isDay
                 ? weatherIcons.value[data.weatherCode].iconDay
                 : weatherIcons.value[data.weatherCode].iconNight;
 
-            return `/weather-icons/${iconName}.svg`;
+            return `${baseURL}/weather-icons/${iconName}.svg`;
         }
 
         const iconName = weatherData.value.current.isDay
