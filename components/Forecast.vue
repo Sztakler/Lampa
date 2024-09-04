@@ -10,7 +10,7 @@
             <NuxtLink to="/weekly">Weekly</NuxtLink>
         </TextButton>
     </nav>
-
+    {{ cityName }}
     <div v-if="weatherData" class="weather">
         <header>
             <h2>
@@ -283,7 +283,7 @@ import { useWeatherStore } from "@/stores/weather";
 import { storeToRefs } from "pinia";
 
 const weatherStore = useWeatherStore();
-const { cityName, weatherData, weatherIcons } = storeToRefs(weatherStore);
+const { cityName, weatherData } = storeToRefs(weatherStore);
 
 function calculateDateString(dayIndex, options) {
     let date = new Date();
