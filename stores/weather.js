@@ -1,8 +1,7 @@
 import { fetchWeatherApi } from "openmeteo";
 import { defineStore } from "pinia";
 
-const config = useRuntimeConfig();
-const baseURL = config.public.baseURL;
+const baseURL = "/Lampa";
 
 const params = {
     latitude: null,
@@ -434,7 +433,7 @@ export const useWeatherStore = defineStore("weather", () => {
             ? weatherIcons.value[data.weatherCode[index]].iconDay
             : weatherIcons.value[data.weatherCode[index]].iconNight;
 
-        return `/weather-icons/${iconName}.svg`;
+        return `${baseURL}/weather-icons/${iconName}.svg`;
     }
 
     /**
