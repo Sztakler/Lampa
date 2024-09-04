@@ -7,11 +7,7 @@ export default defineNuxtConfig({
     app: {
         baseURL: "/Lampa/",
     },
-    runtimeConfig: {
-        public: {
-            baseURL: "/Lampa",
-        },
-    },
+
     // routeRules: {
     // "/": { prerender: false },
     // },
