@@ -19,10 +19,6 @@ useFetch(async () => {
 watch(cityName, async (newValue) => {
     await weatherStore.updateWeatherData();
 });
-
-useAsyncData(async () => {
-    await weatherStore.updateWeatherData();
-});
 </script>
 
 <style scoped>

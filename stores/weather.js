@@ -238,12 +238,11 @@ async function fetchWeatherData(location) {
         return weatherData;
     } catch (error) {
         console.error("Error fetching weather data:", error);
-    } finally {
     }
 }
 
 export const useWeatherStore = defineStore("weather", () => {
-    const cityName = ref("");
+    const cityName = ref("Wrocław");
     const weatherData = ref(null);
     const weatherIcons = ref({
         0: {
@@ -399,6 +398,11 @@ export const useWeatherStore = defineStore("weather", () => {
      * @returns {string} Static path to icon.
      */
     function getIconPath(index = 0, interval = "current") {
+        if (!weatherData.value) {
+            console.error("weatherData is null");
+            return null;
+        }
+
         let data = weatherData.value.current;
 
         if (interval === "hourly") {
@@ -439,6 +443,10 @@ export const useWeatherStore = defineStore("weather", () => {
      * @returns {string} Weather description.
      */
     function getWeatherDescription(index = 0, interval) {
+        if (!weatherData.value) {
+            console.error("weatherData is null");
+            return null;
+        }
         if (interval === "hourly") {
             return weatherIcons.value[
                 weatherData.value.hourly.weatherCode[index]
@@ -452,8 +460,6 @@ export const useWeatherStore = defineStore("weather", () => {
                 .name;
         }
     }
-
-    function getSunTimes() {}
 
     async function updateWeatherData() {
         console.log("update");

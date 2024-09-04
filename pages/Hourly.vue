@@ -6,54 +6,57 @@
             </ArrowButton>
         </header>
 
-        <nav id="options">
-            <TextButton
-                @click="updateSelectedOption('precipitationProbability')"
-                :active="selectedOption === 'precipitationProbability'"
-                :font-weight="400"
-                >Precipitation probability</TextButton
-            >
-            <TextButton
-                @click="updateSelectedOption('precipitationRate')"
-                :active="selectedOption === 'precipitationRate'"
-                :font-weight="400"
-                >Precipitation rate</TextButton
-            >
-            <TextButton
-                @click="updateSelectedOption('temperature')"
-                :active="selectedOption === 'temperature'"
-                :font-weight="400"
-                >Temperature</TextButton
-            >
-            <TextButton
-                @click="updateSelectedOption('wind')"
-                :active="selectedOption === 'wind'"
-                :font-weight="400"
-                >Wind</TextButton
-            >
-            <TextButton
-                @click="updateSelectedOption('uv')"
-                :active="selectedOption === 'uv'"
-                :font-weight="400"
-                >UV</TextButton
-            >
-            <TextButton
-                @click="updateSelectedOption('airQuality')"
-                :active="selectedOption === 'airQuality'"
-                :font-weight="400"
-                >Air quality</TextButton
-            >
-        </nav>
+        <div v-if="weatherData">
+            <nav id="options">
+                <TextButton
+                    @click="updateSelectedOption('precipitationProbability')"
+                    :active="selectedOption === 'precipitationProbability'"
+                    :font-weight="400"
+                    >Precipitation probability</TextButton
+                >
+                <TextButton
+                    @click="updateSelectedOption('precipitationRate')"
+                    :active="selectedOption === 'precipitationRate'"
+                    :font-weight="400"
+                    >Precipitation rate</TextButton
+                >
+                <TextButton
+                    @click="updateSelectedOption('temperature')"
+                    :active="selectedOption === 'temperature'"
+                    :font-weight="400"
+                    >Temperature</TextButton
+                >
+                <TextButton
+                    @click="updateSelectedOption('wind')"
+                    :active="selectedOption === 'wind'"
+                    :font-weight="400"
+                    >Wind</TextButton
+                >
+                <TextButton
+                    @click="updateSelectedOption('uv')"
+                    :active="selectedOption === 'uv'"
+                    :font-weight="400"
+                    >UV</TextButton
+                >
+                <TextButton
+                    @click="updateSelectedOption('airQuality')"
+                    :active="selectedOption === 'airQuality'"
+                    :font-weight="400"
+                    >Air quality</TextButton
+                >
+            </nav>
 
-        <ul>
-            <li v-for="i in 24">
-                <HourWeather
-                    :time="i"
-                    :option="selectedOption"
-                    :key="i"
-                ></HourWeather>
-            </li>
-        </ul>
+            <ul>
+                <li v-for="i in 24">
+                    <HourWeather
+                        :time="i"
+                        :option="selectedOption"
+                        :key="i"
+                    ></HourWeather>
+                </li>
+            </ul>
+        </div>
+        <div v-else>dupa</div>
     </article>
 </template>
 

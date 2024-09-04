@@ -6,15 +6,22 @@
             </ArrowButton>
         </header>
 
-        <ul>
+        <ul v-if="weatherData">
             <li v-for="i in 7">
                 <DayWeather :index="i"></DayWeather>
             </li>
         </ul>
+        <div v-else>dada</div>
     </article>
 </template>
 
-<script lang="ts" setup></script>
+<script setup>
+import { useWeatherStore } from "@/stores/weather";
+import { storeToRefs } from "pinia";
+
+const weatherStore = useWeatherStore();
+const { weatherData } = storeToRefs(weatherStore);
+</script>
 
 <style scoped>
 article {
