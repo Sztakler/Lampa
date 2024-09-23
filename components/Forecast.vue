@@ -10,7 +10,6 @@
             <NuxtLink to="/weekly">Weekly</NuxtLink>
         </TextButton>
     </nav>
-    {{ cityName }}
     <div v-if="weatherData" class="weather">
         <header>
             <h2>
@@ -336,7 +335,8 @@ h2 {
 .weather {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    height: 100%;
+    justify-content: space-evenly;
     align-items: center;
     gap: 24px;
 }
@@ -358,7 +358,7 @@ h2 {
 }
 
 .weather-icon > img {
-    height: 128px;
+    height: 256px;
     width: auto;
     margin: -32px;
 }

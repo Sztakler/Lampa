@@ -13,8 +13,10 @@
     },
     "dependencies": {
         "@pinia/nuxt": "^0.5.4",
+        "@vite-pwa/nuxt": "^0.10.5",
+        "defu": "^6.1.4",
         "dotenv": "^16.4.5",
-        "nuxt": "^3.13.0",
+        "nuxt": "^3.13.2",
         "openmeteo": "^1.1.4",
         "pinia": "^2.2.2",
         "push-dir": "^0.4.1",

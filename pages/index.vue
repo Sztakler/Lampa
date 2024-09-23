@@ -1,4 +1,5 @@
 <template>
+    <VitePwaManifest />
     <Forecast :dayIndex="0" />
 </template>
 
