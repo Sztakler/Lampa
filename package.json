@@ -9,7 +9,8 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
+        // "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
+        "deploy": "gh-pages -d dist"
     },
     "dependencies": {
         "@pinia/nuxt": "^0.5.4",
