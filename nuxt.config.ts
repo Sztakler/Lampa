@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     css: ["@/assets/css/main.css"],
     modules: ["@pinia/nuxt", "@vite-pwa/nuxt"],
     app: {
-        baseURL: "/nuxt3-pwa/",
+        baseURL: "/Lampa/",
     },
     pwa: {
         manifest: {
@@ -42,7 +42,7 @@ export default defineNuxtConfig({
             ],
         },
         workbox: {
-            navigateFallback: "/nuxt3-pwa/",
+            navigateFallback: "/Lampa/",
         },
         devOptions: {
             enabled: true,
