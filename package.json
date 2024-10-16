@@ -2,28 +2,24 @@
     "name": "lampa",
     "private": true,
     "type": "module",
-    "homepage": "https://sztakler.github.io/Lampa",
     "scripts": {
         "build": "nuxt build",
         "dev": "nuxt dev",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        // "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
-        "deploy": "gh-pages -d dist"
+        "deploy": "push-dir --dir=./.output/public --branch=gh-pages --cleanup"
     },
     "dependencies": {
+        "nuxt": "^3.13.0",
+        "vue": "latest",
+        "vue-router": "latest",
         "@pinia/nuxt": "^0.5.4",
-        "@vite-pwa/nuxt": "^0.10.5",
-        "defu": "^6.1.4",
-        "dotenv": "^16.4.5",
-        "nuxt": "^3.13.2",
         "openmeteo": "^1.1.4",
-        "pinia": "^2.2.2",
-        "push-dir": "^0.4.1",
-        "vue": "latest"
+        "pinia": "^2.2.2"
     },
     "devDependencies": {
-        "gh-pages": "^6.1.1"
+        "@vite-pwa/nuxt": "^0.10.5",
+        "push-dir": "^0.4.1"
     }
 }
