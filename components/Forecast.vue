@@ -397,16 +397,6 @@ h2 {
     gap: 16px;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* Internet Explorer 10+ */
-}
-
-.container::-webkit-scrollbar {
-    display: none;
-    /* Chrome, Safari, Opera */
 }
 
 .loading {

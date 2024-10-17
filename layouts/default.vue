@@ -44,7 +44,6 @@ section {
     gap: 24px;
     padding: 16px;
     width: 390px;
-    height: 90vh;
 }
 
 @media screen and (max-width: 480px) {
