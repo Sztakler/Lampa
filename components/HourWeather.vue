@@ -24,7 +24,7 @@ const { time, option } = defineProps(["time", "option"]);
 const index = ref(new Date().getHours() + time - 1);
 
 function getMeasurementValue(option) {
-    console.log(option);
+    //console.log(option);
     const data = weatherData.value.hourly;
     if (option === "precipitationProbability") {
         return Math.round(data.precipitationProbability[index.value]) + " %";

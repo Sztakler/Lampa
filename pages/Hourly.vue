@@ -75,14 +75,14 @@ const selectedOption = ref("temperature");
 
 function updateSelectedOption(newOption) {
     selectedOption.value = newOption;
-    console.log("update", selectedOption.value);
+    //console.log("update", selectedOption.value);
 }
 
 onMounted(() => {
     const navElement = document.querySelector("#options");
     navElement.addEventListener("wheel", (event) => {
         event.preventDefault();
-        console.log("nav");
+        //console.log("nav");
         navElement.scrollLeft += event.deltaY;
     });
 });

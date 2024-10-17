@@ -1,5 +1,6 @@
 import { fetchWeatherApi } from "openmeteo";
 import { defineStore } from "pinia";
+import { loadState, saveState } from "./helpers";
 
 const baseURL = "/Lampa";
 
@@ -102,7 +103,7 @@ async function fetchSuntimesApi(location, days) {
             let date = new Date();
             date.setDate(date.getDate() + i);
             const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-            console.log(dateString);
+            //console.log(dateString);
             const reponse = await fetch(
                 `https://api.sunrise-sunset.org/json?lat=${location.latitude}&lng=${location.longitude}&date=${dateString}&tzid=${location.timezone}`,
             );
@@ -236,7 +237,7 @@ async function fetchWeatherData(location) {
         const sunTimes = await fetchSuntimesApi(location, days);
         weatherData.daily.sunrise = sunTimes.sunrise;
         weatherData.daily.sunset = sunTimes.sunset;
-        console.log(location);
+        //console.log(location);
         return weatherData;
     } catch (error) {
         console.error("Error fetching weather data:", error);
@@ -244,7 +245,10 @@ async function fetchWeatherData(location) {
 }
 
 export const useWeatherStore = defineStore("weather", () => {
-    const cityName = ref("Wrocław");
+    const persistedCityName = loadState();
+    // console.log("persisted", persistedCityName);
+    const cityName = ref(persistedCityName);
+    //console.log(cityName.value);
     const weatherData = ref(null);
     const weatherIcons = ref({
         0: {
@@ -464,12 +468,21 @@ export const useWeatherStore = defineStore("weather", () => {
     }
 
     async function updateWeatherData() {
-        console.log("update");
+        //console.log("update", cityName.value);
+        if (!cityName) return;
         location.value = await fetchGeocodingData(cityName);
         weatherData.value = await fetchWeatherData(location.value);
 
         // console.log(weatherData.value);
     }
+
+    function loadCityFromStorage() {
+        cityName.value = loadState("cityName");
+    }
+
+    onMounted(() => {
+        loadCityFromStorage();
+    });
 
     return {
         cityName,
@@ -477,6 +490,7 @@ export const useWeatherStore = defineStore("weather", () => {
         updateWeatherData,
         getIconPath,
         getWeatherDescription,
+        loadCityFromStorage,
         weatherData,
         weatherIcons,
     };

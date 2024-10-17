@@ -32,7 +32,7 @@
                         )
                     "
                 />
-                <h2>
+                <h2 style="font-weight: 200">
                     {{
                         weatherStore.getWeatherDescription(
                             dayIndex,
@@ -344,7 +344,7 @@ h2 {
 .temperature {
     font-size: 96px;
     line-height: 100%;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .weather-icon {
