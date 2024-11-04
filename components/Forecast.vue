@@ -1,4 +1,6 @@
 <template>
+    <button @click="showModal = true">Open Modal</button>
+    <Menu :show="showModal" @close="showModal = false" />
     <nav>
         <TextButton>
             <NuxtLink to="/">Today</NuxtLink>
@@ -277,6 +279,7 @@
 
 <script setup>
 const { dayIndex } = defineProps(["dayIndex"]);
+const showModal = ref(false);
 
 import { useWeatherStore } from "@/stores/weather";
 import { storeToRefs } from "pinia";
