@@ -11,27 +11,10 @@ import { loadState, saveState } from "../stores/helpers";
 
 const weatherStore = useWeatherStore();
 const { cityName } = storeToRefs(weatherStore);
-const { updateWeatherData, loadCityFromStorage } = weatherStore;
-
-useFetch(async () => {
-    await weatherStore.updateWeatherData();
-});
 
 watch(cityName, async (_) => {
     await weatherStore.updateWeatherData();
     saveState(cityName.value);
-});
-
-onBeforeMount(() => {
-    weatherStore.loadCityFromStorage();
-});
-
-onMounted(() => {
-    weatherStore.loadCityFromStorage();
-    // const persistedCityName = loadState("cityName");
-    // if (persistedCityName) {
-    // cityName.value = persistedCityName;
-    // }
 });
 </script>
 

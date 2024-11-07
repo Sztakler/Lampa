@@ -2,7 +2,6 @@ export const loadState = () => {
     const defaultCityName = "";
     try {
         const cityName = localStorage.getItem("cityName");
-        //console.log("cityname stored ", cityName);
         if (cityName === null) {
             return defaultCityName;
         }

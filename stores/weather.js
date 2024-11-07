@@ -73,8 +73,12 @@ const geocodingURL = "https://nominatim.openstreetmap.org/search";
 
 async function fetchGeocodingData(cityName) {
     try {
+        if (typeof cityName === "object") {
+            cityName = cityName.value;
+        }
+
         const response = await fetch(
-            geocodingURL + `?q=${cityName.value}&format=json&limit=1`,
+            geocodingURL + `?q=${cityName}&format=json&limit=1`,
         );
         if (!response.ok) {
             throw new Error("Geocoding response was not ok");
@@ -103,7 +107,6 @@ async function fetchSuntimesApi(location, days) {
             let date = new Date();
             date.setDate(date.getDate() + i);
             const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-            //console.log(dateString);
             const reponse = await fetch(
                 `https://api.sunrise-sunset.org/json?lat=${location.latitude}&lng=${location.longitude}&date=${dateString}&tzid=${location.timezone}`,
             );
@@ -237,18 +240,22 @@ async function fetchWeatherData(location) {
         const sunTimes = await fetchSuntimesApi(location, days);
         weatherData.daily.sunrise = sunTimes.sunrise;
         weatherData.daily.sunset = sunTimes.sunset;
-        //console.log(location);
         return weatherData;
     } catch (error) {
         console.error("Error fetching weather data:", error);
     }
 }
 
+export function loadPersistedCityName() {
+    const persistedCityName = loadState();
+    const cityName = ref(persistedCityName);
+
+    return persistedCityName;
+}
+
 export const useWeatherStore = defineStore("weather", () => {
     const persistedCityName = loadState();
-    // console.log("persisted", persistedCityName);
     const cityName = ref(persistedCityName);
-    //console.log(cityName.value);
     const weatherData = ref(null);
     const weatherIcons = ref({
         0: {
@@ -468,12 +475,9 @@ export const useWeatherStore = defineStore("weather", () => {
     }
 
     async function updateWeatherData() {
-        //console.log("update", cityName.value);
         if (!cityName) return;
         location.value = await fetchGeocodingData(cityName);
         weatherData.value = await fetchWeatherData(location.value);
-
-        // console.log(weatherData.value);
     }
 
     function loadCityFromStorage() {
@@ -482,6 +486,7 @@ export const useWeatherStore = defineStore("weather", () => {
 
     onMounted(() => {
         loadCityFromStorage();
+        updateWeatherData();
     });
 
     return {
@@ -490,6 +495,7 @@ export const useWeatherStore = defineStore("weather", () => {
         updateWeatherData,
         getIconPath,
         getWeatherDescription,
+        fetchGeocodingData,
         loadCityFromStorage,
         weatherData,
         weatherIcons,

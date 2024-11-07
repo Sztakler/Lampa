@@ -1,6 +1,5 @@
 <template>
     <main>
-        <Navigation />
         <section>
             <slot></slot>
         </section>

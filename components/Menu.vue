@@ -2,27 +2,53 @@
     <transition name="slide">
         <div v-if="show" class="modal-overlay" @click="close">
             <div class="modal-content" @click.stop>
+                <div style="border: 1px black solid">
+                    <Navigation />
+                </div>
                 <button class="modal-close" @click="close">×</button>
                 <header>
                     <h2>Saved cities</h2>
-                    {{ show }}
+                    {{ cityName }}
+                    {{ weatherData.general.cityName }}
                 </header>
                 <ul>
-                    <li>Wrocław</li>
-                    <li>Kraków</li>
-                    <li>Warszawa</li>
-                    <li>Katowice</li>
+                    <li v-for="(city, index) in savedCities" :key="index">
+                        <button @click="changeCity(city)">{{ city }}</button>
+                    </li>
                 </ul>
 
-                <button>Add new</button>
+                <button @click="addCity(cityName)">Add new</button>
             </div>
         </div>
     </transition>
 </template>
 
 <script setup>
+import { useWeatherStore } from "@/stores/weather";
+import { storeToRefs } from "pinia";
+import { loadState, saveState } from "../stores/helpers";
+
+const weatherStore = useWeatherStore();
+const { updateWeatherData, fetchGeocodingData } = weatherStore;
+const { cityName, weatherData } = storeToRefs(weatherStore);
+const savedCities = ref(["Wrocław", "Katowice", "Kraków", "Warszawa"]);
+
 const { show } = defineProps(["show"]);
 const emit = defineEmits(["close"]);
+
+function changeCity(city) {
+    cityName.value = city;
+    saveState(city);
+    updateWeatherData();
+    close();
+}
+
+async function addCity(city) {
+    let geocodingData = await fetchGeocodingData(city);
+
+    if (!savedCities.value.includes(geocodingData.name))
+        savedCities.value = [...savedCities.value, geocodingData.name];
+}
 
 const close = () => {
     emit("close");
