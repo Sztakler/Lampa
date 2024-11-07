@@ -8,8 +8,6 @@
                 <button class="modal-close" @click="close">×</button>
                 <header>
                     <h2>Saved cities</h2>
-                    {{ cityName }}
-                    {{ weatherData.general.cityName }}
                 </header>
                 <ul>
                     <li v-for="(city, index) in savedCities" :key="index">
@@ -26,12 +24,18 @@
 <script setup>
 import { useWeatherStore } from "@/stores/weather";
 import { storeToRefs } from "pinia";
-import { loadState, saveState } from "../stores/helpers";
+import {
+    saveState,
+    saveToLocalStorage,
+    loadFromLocalStorage,
+} from "../stores/helpers";
 
 const weatherStore = useWeatherStore();
 const { updateWeatherData, fetchGeocodingData } = weatherStore;
-const { cityName, weatherData } = storeToRefs(weatherStore);
-const savedCities = ref(["Wrocław", "Katowice", "Kraków", "Warszawa"]);
+const { cityName } = storeToRefs(weatherStore);
+
+const persistedStateCities = loadFromLocalStorage("cities") || [];
+const savedCities = ref(persistedStateCities);
 
 const { show } = defineProps(["show"]);
 const emit = defineEmits(["close"]);
@@ -46,8 +50,10 @@ function changeCity(city) {
 async function addCity(city) {
     let geocodingData = await fetchGeocodingData(city);
 
-    if (!savedCities.value.includes(geocodingData.name))
+    if (!savedCities.value.includes(geocodingData.name)) {
         savedCities.value = [...savedCities.value, geocodingData.name];
+        saveToLocalStorage("cities", savedCities.value);
+    }
 }
 
 const close = () => {
