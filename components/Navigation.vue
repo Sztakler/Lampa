@@ -20,10 +20,10 @@ watch(cityName, async (_) => {
 
 <style scoped>
 nav {
-    height: 32px;
-    width: 390px;
+    width: 100%;
     padding: 16px;
     border-radius: 16px;
+    border: var(--black) solid 1px;
     background-color: var(--white);
     display: flex;
     justify-content: space-between;

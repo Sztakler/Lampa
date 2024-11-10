@@ -246,16 +246,8 @@ async function fetchWeatherData(location) {
     }
 }
 
-export function loadPersistedCityName() {
-    const persistedCityName = loadState();
-    const cityName = ref(persistedCityName);
-
-    return persistedCityName;
-}
-
 export const useWeatherStore = defineStore("weather", () => {
-    const persistedCityName = loadState();
-    const cityName = ref(persistedCityName);
+    const cityName = ref("");
     const weatherData = ref(null);
     const weatherIcons = ref({
         0: {

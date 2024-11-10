@@ -1,17 +1,21 @@
 <template>
-    <button @click="showModal = true">Open Modal</button>
     <Menu :show="showModal" @close="showModal = false" />
-    <nav>
-        <TextButton>
-            <NuxtLink to="/">Today</NuxtLink>
-        </TextButton>
-        <TextButton>
-            <NuxtLink to="/tomorrow">Tomorrow</NuxtLink>
-        </TextButton>
-        <TextButton>
-            <NuxtLink to="/weekly">Weekly</NuxtLink>
-        </TextButton>
-    </nav>
+    <div class="nav-container">
+        <nav>
+            <TextButton>
+                <NuxtLink to="/">Today</NuxtLink>
+            </TextButton>
+            <TextButton>
+                <NuxtLink to="/tomorrow">Tomorrow</NuxtLink>
+            </TextButton>
+            <TextButton>
+                <NuxtLink to="/weekly">Weekly</NuxtLink>
+            </TextButton>
+        </nav>
+        <button class="modal-button" @click="showModal = true">
+            <img width="24px" src="@/assets/svg/map.svg" />
+        </button>
+    </div>
     <div v-if="weatherData" class="weather">
         <header>
             <h2>
@@ -404,6 +408,28 @@ h2 {
 
 .loading {
     height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    all: unset;
+    cursor: pointer;
+}
+button:hover {
+    opacity: 60%;
+}
+
+.modal-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.nav-container {
+    position: relative;
     width: 100%;
     display: flex;
     justify-content: center;
