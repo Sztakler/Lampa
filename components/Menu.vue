@@ -2,26 +2,8 @@
     <transition name="slide">
         <div v-if="show" class="modal-overlay" @click="close">
             <div class="modal-content" @click.stop>
-                <div class="close-button-container">
-                    <button class="modal-close" @click="close">
-                        <img
-                            class="monochromatic"
-                            width="16px"
-                            src="@/assets/svg/xmark.svg"
-                        />
-                    </button>
-                </div>
-                <div class="header">
-                    <div class="navigation-container">
-                        <Navigation />
-                        <button class="add-button" @click="addCity(cityName)">
-                            <img
-                                class="monochromatic"
-                                width="16px"
-                                src="@/assets/svg/plus.svg"
-                            />
-                        </button>
-                    </div>
+                <div class="navigation-container">
+                    <Navigation @addCity="addCity(cityName)" @close="close" />
                 </div>
                 <div class="cities-list">
                     <header>
@@ -33,13 +15,13 @@
                                 class="change-city-button"
                                 @click="changeCity(city)"
                             >
-                                {{ city }}
+                                {{ city.name }}
                             </button>
                             <button @click="deleteCity(city)">
                                 <img
                                     class="monochromatic"
                                     width="12px"
-                                    src="@/assets/svg/trash.svg"
+                                    src="@/assets/svg/minus.svg"
                                 />
                             </button>
                         </li>
@@ -61,7 +43,7 @@ import {
 
 const weatherStore = useWeatherStore();
 const { updateWeatherData, fetchGeocodingData } = weatherStore;
-const { cityName } = storeToRefs(weatherStore);
+const { cityName, location } = storeToRefs(weatherStore);
 
 const savedCities = ref([]);
 
@@ -73,8 +55,10 @@ const { show } = defineProps(["show"]);
 const emit = defineEmits(["close"]);
 
 function changeCity(city) {
-    cityName.value = city;
-    saveState(city);
+    cityName.value = city.name;
+    location.value = city;
+    saveToLocalStorage("cityName", city.name);
+    saveToLocalStorage("location", city);
     updateWeatherData();
     close();
 }
@@ -86,11 +70,19 @@ async function deleteCity(city) {
     saveToLocalStorage("cities", savedCities.value);
 }
 
-async function addCity(city) {
-    let geocodingData = await fetchGeocodingData(city);
+async function addCity() {
+    const newLocation = location.value;
+    let isDuplicate = savedCities.value.some((city) => {
+        console.log(city);
+        return (
+            city.longitude === newLocation.longitude &&
+            city.latitude === newLocation.latitude &&
+            city.name === newLocation.name
+        );
+    });
 
-    if (!savedCities.value.includes(geocodingData.name)) {
-        savedCities.value = [...savedCities.value, geocodingData.name];
+    if (!isDuplicate) {
+        savedCities.value = [newLocation, ...savedCities.value];
         saveToLocalStorage("cities", savedCities.value);
     }
 }
@@ -151,7 +143,14 @@ const close = () => {
 .navigation-container {
     display: flex;
     justify-content: flex-start;
+    align-items: flex-start;
     gap: 8px;
+    position: absolute;
+    width: 100%;
+    padding: 16px;
+    z-index: 100;
+    left: 0;
+    width: calc(100% - 2 * 16px);
 }
 
 .close-button-container {
@@ -164,6 +163,7 @@ const close = () => {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    padding-top: calc(72px + 24px);
 }
 
 ul {

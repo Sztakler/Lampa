@@ -12,9 +12,9 @@ export const loadState = () => {
     }
 };
 
-export const saveState = (cityName) => {
+export const saveState = (key, value) => {
     try {
-        localStorage.setItem("cityName", cityName);
+        localStorage.setItem(key, value);
     } catch (err) {
         console.error("Error during saving cityName", err);
     }
