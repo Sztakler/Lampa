@@ -1,0 +1,1 @@
+import{_ as a,c as t,a as s,D as c,o}from"./vu7MYg1j.js";const n={__name:"default",setup(l){return(e,r)=>(o(),t("main",null,[s("section",null,[c(e.$slots,"default",{},void 0)])]))}},d=a(n,[["__scopeId","data-v-cdcf90cf"]]);export{d as default};
