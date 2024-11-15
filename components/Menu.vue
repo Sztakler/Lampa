@@ -107,6 +107,7 @@ const close = () => {
     transition: transform 0.5s ease;
     width: 100%;
     height: 100%;
+    border-radius: 16px;
 }
 
 .modal-content {
@@ -119,6 +120,7 @@ const close = () => {
     display: flex;
     flex-direction: column;
     gap: 32px;
+    border-radius: 16px;
 }
 
 .slide-enter-active {
@@ -199,5 +201,11 @@ button:hover {
 
 img:hover {
     opacity: 60%;
+}
+
+@media screen and (max-width: 480px) {
+    .modal-overlay {
+        width: 100%;
+    }
 }
 </style>

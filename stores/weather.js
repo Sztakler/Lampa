@@ -481,6 +481,17 @@ export const useWeatherStore = defineStore("weather", () => {
 
     onMounted(() => {
         loadCityFromStorage();
+
+        if (!location.value) {
+            location.value = {
+                latitude: null,
+                longitude: null,
+                name: "",
+            };
+        }
+        if (!cityName.value) {
+            cityName.value = "";
+        }
         updateWeatherData();
     });
 
